@@ -508,6 +508,7 @@ module DispatcherShell
           # [Wang Yihang] Here!!!!
           if (dispatcher.commands.has_key?(method) or dispatcher.deprecated_commands.include?(method))
             self.on_command_proc.call(line.strip) if self.on_command_proc
+            p "[DEBUG]: Running meterpreter shell commands #{method}(#{arguments})"
             run_command(dispatcher, method, arguments)
             found = true
           end
@@ -546,6 +547,7 @@ module DispatcherShell
     if(blocked_command?(method))
       print_error("The #{method} command has been disabled.")
     else
+      # Ruby call method, meta-programming
       dispatcher.send('cmd_' + method, *arguments)
     end
   ensure

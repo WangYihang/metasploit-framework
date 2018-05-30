@@ -66,17 +66,99 @@ class CommandShell
     "Command shell"
   end
 
+#############################################################################
+
+  def commands
+    c = {
+        '?'            => 'Help menu',
+        # [Wang Yihang]
+        # metasploit-framework/test/functional/meterpreter/meterpreter_specs.rb
+        'background'   => 'Backgrounds the current shell session',
+        # 'close'        => 'Closes a channel',
+        # 'channel'      => 'Displays information or control active channels',
+        # 'exit'         => 'Terminate the meterpreter session',
+        # 'help'         => 'Help menu',
+        # 'irb'          => 'Drop into irb scripting mode',
+        # 'use'          => 'Deprecated alias for "load"',
+        # 'load'         => 'Load one or more meterpreter extensions',
+        # 'machine_id'   => 'Get the MSF ID of the machine attached to the session',
+        # 'guid'         => 'Get the session GUID',
+        # 'quit'         => 'Terminate the meterpreter session',
+        # 'resource'     => 'Run the commands stored in a file',
+        # 'uuid'         => 'Get the UUID for the current session',
+        # 'read'         => 'Reads data from a channel',
+        # 'run'          => 'Executes a meterpreter script or Post module',
+        # 'bgrun'        => 'Executes a meterpreter script as a background thread',
+        # 'bgkill'       => 'Kills a background meterpreter script',
+        # 'get_timeouts' => 'Get the current session timeout values',
+        # 'set_timeouts' => 'Set the current session timeout values',
+        # 'sessions'     => 'Quickly switch to another session',
+        # 'bglist'       => 'Lists running background scripts',
+        # 'write'        => 'Writes data to a channel',
+        # 'enable_unicode_encoding'  => 'Enables encoding of unicode strings',
+        # 'disable_unicode_encoding' => 'Disables encoding of unicode strings'
+    }
+
+  end
+
+
+  #
+  # Parse a line into an array of arguments.
+  #
+  def parse_line(line)
+    # log_input(line)
+    #
+    # line.gsub!(/(\r|\n)/, '')
+    #
+    # begin
+    #   return args = Rex::Parser::Arguments.from_s(line)
+    # rescue ::ArgumentError
+    #   print_error("Parse error: #{$!}")
+    # end
+    #
+    # return []
+    return line.split(' ')
+  end
+
   #
   # Explicitly runs a command.
   #
   def run_cmd(cmd)
     # [Wang Yihang]: Maybe here is suitable to meta shell command
-    p "[DEBUG]: # #{cmd}"
-    if cmd == 'background'
-      p "[DEBUG] Found background command!"
+    p "[DEBUG]: #!!!!!!!! Right here!!!!! #{cmd}"
+    # Run single, refers to:
+    # lib/msf/base/sessions/meterpreter.rb:375
+
+    arguments = parse_line(cmd)
+    method    = arguments.shift
+
+    p "Arguments: #{arguments}"
+    p "Method: #{method}"
+
+    built_in_command_found = false
+
+    if self.commands.has_key?(method)
+      self.run_command(method, arguments)
+      built_in_command_found = true
     end
-    shell_command(cmd)
+
+    if not built_in_command_found
+      p "[DEBUG]: Not a built-in command, executing directly #{cmd}"
+      # shell_command(cmd)
+      shell_write(cmd)
+    end
+
   end
+
+  def run_command(method, arguments)
+    p "[DEBUG]: Run built-in command: #{method}(#{arguments})"
+    # TODO: Run built-in commands
+  end
+
+
+  #############################################################################
+
+
 
   #
   # Calls the class method.
@@ -102,6 +184,11 @@ class CommandShell
   #
   def shell_command(cmd)
     # Send the command to the session's stdin.
+    #
+    #
+    #
+    binding.pry
+    #
     shell_write(cmd + "\n")
 
 
@@ -191,6 +278,10 @@ class CommandShell
   def shell_write(buf)
     return if not buf
 
+
+
+
+    # binding.pry
     begin
       framework.events.on_session_command(self, buf.strip)
       rstream.write(buf)
@@ -332,7 +423,10 @@ protected
       sd = Rex::ThreadSafe.select([ _local_fd ], nil, [_local_fd], 5.0)
 
       # Write input to the ring's input mechanism
-      shell_write(user_input.gets) if sd
+
+
+      run_cmd(user_input.gets) if sd
+      # shell_write(user_input.gets) if sd
     end
 
     ensure

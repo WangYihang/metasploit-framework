@@ -304,6 +304,7 @@ class Console::CommandDispatcher::Core
   end
 
   def cmd_background
+    # [Wang Yihang] Implementation of meterpreter
     print_status("Backgrounding session #{client.name}...")
     client.interacting = false
   end
