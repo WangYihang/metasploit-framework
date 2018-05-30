@@ -1,6 +1,7 @@
 # -*- coding: binary -*-
 require 'rex/ui'
 require 'rex/io/ring_buffer'
+require 'pry'
 
 module Msf
 module Session
@@ -129,6 +130,7 @@ protected
   def _suspend
     # Ask the user if they would like to background the session
     # [Wang Yihang]
+    binding.pry
     if (prompt_yesno("Background session #{name}?") == true)
       self.interacting = false
     end

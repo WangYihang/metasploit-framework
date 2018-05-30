@@ -153,6 +153,12 @@ class CommandShell
   def run_command(method, arguments)
     p "[DEBUG]: Run built-in command: #{method}(#{arguments})"
     # TODO: Run built-in commands
+    if method == 'background'
+      p "[DEBUG]: Backgrounding...!!!"
+      if (prompt_yesno("Background session #{name}?") == true)
+        self.interacting = false
+      end
+    end
   end
 
 
