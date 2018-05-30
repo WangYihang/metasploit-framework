@@ -128,6 +128,7 @@ protected
   #
   def _suspend
     # Ask the user if they would like to background the session
+    # [Wang Yihang]
     if (prompt_yesno("Background session #{name}?") == true)
       self.interacting = false
     end

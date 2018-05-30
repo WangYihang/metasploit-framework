@@ -2,6 +2,7 @@
 require 'msf/base'
 require 'msf/base/sessions/scriptable'
 require 'shellwords'
+require 'pry'
 
 module Msf
 module Sessions
@@ -69,6 +70,11 @@ class CommandShell
   # Explicitly runs a command.
   #
   def run_cmd(cmd)
+    # [Wang Yihang]: Maybe here is suitable to meta shell command
+    p "[DEBUG]: # #{cmd}"
+    if cmd == 'background'
+      p "[DEBUG] Found background command!"
+    end
     shell_command(cmd)
   end
 
@@ -88,6 +94,7 @@ class CommandShell
     return true
   end
 
+
   ##
   # :category: Msf::Session::Provider::SingleCommandShell implementors
   #
@@ -96,6 +103,7 @@ class CommandShell
   def shell_command(cmd)
     # Send the command to the session's stdin.
     shell_write(cmd + "\n")
+
 
     timeo = 5
     etime = ::Time.now.to_f + timeo

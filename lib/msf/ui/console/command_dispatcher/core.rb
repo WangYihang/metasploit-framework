@@ -120,6 +120,7 @@ class Core
       "quit"       => "Exit the console",
       "route"      => "Route traffic through a session",
       "save"       => "Saves the active datastores",
+      # [Wang Yihang]
       "sessions"   => "Dump session listings and display information about sessions",
       "set"        => "Sets a context-specific variable to a value",
       "setg"       => "Sets a global variable to a value",
@@ -1228,6 +1229,7 @@ class Core
     # Now, perform the actual method
     case method
     when 'cmd'
+      p "[DEBUG] cmds: #{cmds}"
       if cmds.length < 1
         print_error("No command specified!")
         return false
@@ -1258,6 +1260,8 @@ class Core
                 print_error("Session #{s} does not have stdapi loaded, skipping...")
                 next
               end
+              p "[DEBUG] Meterpreter command execution #{cmd}"
+              # binding.pry
               c, c_args = cmd.split(' ', 2)
               begin
                 process = session.sys.process.execute(c, c_args,
@@ -1274,7 +1278,11 @@ class Core
               rescue Rex::TimeoutError
                 print_error("Operation timed out")
               end
+              # [Wang Yihang][0]
             elsif session.type == 'shell' || session.type == 'powershell'
+              # TODO: Judgement of build-in commands
+              p "[DEBUG] Shell/Powershell command execution #{cmd}"
+              # binding.pry
               output = session.shell_command(cmd)
               print_line(output) if output
             end
@@ -1321,6 +1329,7 @@ class Core
               session.response_timeout = response_timeout
             end
 
+            # [Wang Yihang] run meterpreter commands
             output = session.run_cmd(cmd, driver.output)
           end
         end
@@ -1364,6 +1373,7 @@ class Core
         end
       end
     when 'interact'
+      # [Wang Yihang]: interaction command
       while sid
         session = verify_session(sid)
         if session
@@ -1374,6 +1384,7 @@ class Core
           print_status("Starting interaction with #{session.name}...\n") unless quiet
           begin
             self.active_session = session
+            # [Wang Yihang] Interesting
             sid = session.interact(driver.input.dup, driver.output)
             self.active_session = nil
             driver.input.reset_tab_completion if driver.input.supports_readline

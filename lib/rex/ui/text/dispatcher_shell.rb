@@ -505,6 +505,7 @@ module DispatcherShell
         next if not dispatcher.respond_to?('commands')
 
         begin
+          # [Wang Yihang] Here!!!!
           if (dispatcher.commands.has_key?(method) or dispatcher.deprecated_commands.include?(method))
             self.on_command_proc.call(line.strip) if self.on_command_proc
             run_command(dispatcher, method, arguments)

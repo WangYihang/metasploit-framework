@@ -47,6 +47,8 @@ class Console::CommandDispatcher::Core
   def commands
     c = {
       '?'            => 'Help menu',
+      # [Wang Yihang]
+      # metasploit-framework/test/functional/meterpreter/meterpreter_specs.rb
       'background'   => 'Backgrounds the current session',
       'close'        => 'Closes a channel',
       'channel'      => 'Displays information or control active channels',

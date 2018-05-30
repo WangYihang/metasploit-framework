@@ -6,7 +6,7 @@ module MeterpreterSpecs
 
     it "should not error when running each command" do
         commands = [ 	"?",
-            "background",
+            "background", # [Wang Yihang]
             "bgkill",
             "bglist",
             "bgrun",

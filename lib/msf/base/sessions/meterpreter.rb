@@ -364,6 +364,7 @@ class Meterpreter < Rex::Post::Meterpreter::Client
   # Explicitly runs a command in the meterpreter console.
   #
   def run_cmd(cmd,output_object=nil)
+    # [Wang Yihang] Interesting
     stored_output_state = nil
     # If the user supplied an Output IO object, then we tell
     # the console to use that, while saving it's previous output/
